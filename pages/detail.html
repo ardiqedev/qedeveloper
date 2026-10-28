@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta
+      name="description"
+      content="Temukan aplikasi, template, dan kode siap pakai dari QEDeveloper."
+    />
+    <meta name="theme-color" content="#102b57" />
+    <meta name="robots" content="index, follow" />
+
+    <title>Detail Produk — QEDeveloper</title>
+
+    <!-- SEO: judul dan deskripsi produk dapat diperbarui oleh detail.js -->
+    <meta property="og:site_name" content="QEDeveloper" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Detail Produk — QEDeveloper" />
+    <meta
+      property="og:description"
+      content="Aplikasi dan template siap pakai untuk pekerjaan yang lebih praktis."
+    />
+
+    <!-- QEDEV CSS -->
+    <link rel="stylesheet" href="../assets/css/variables.css" />
+    <link rel="stylesheet" href="../assets/css/reset.css" />
+    <link rel="stylesheet" href="../assets/css/base.css" />
+    <link rel="stylesheet" href="../assets/css/layout.css" />
+    <link rel="stylesheet" href="../assets/css/components.css" />
+    <link rel="stylesheet" href="../assets/css/pages.css" />
+    <link rel="stylesheet" href="../assets/css/affiliatecard.css" />
+    <link rel="stylesheet" href="../assets/css/responsive.css" />
+
+    <!-- Styling khusus halaman detail -->
+    <style>
+      .detail-header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        min-height: 76px;
+      }
+
+      .detail-header-nav {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .detail-header-nav a {
+        color: var(--color-text-secondary, #64748b);
+        font-size: 0.92rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .detail-header-nav a:hover {
+        color: var(--color-primary, #2563eb);
+      }
+
+      .detail-main {
+        min-height: 65vh;
+        padding-top: 32px;
+        padding-bottom: 80px;
+      }
+
+      .detail-breadcrumb {
+        margin-bottom: 28px;
+        color: var(--color-text-secondary, #64748b);
+        font-size: 0.9rem;
+      }
+
+      .detail-breadcrumb a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .detail-breadcrumb a:hover {
+        color: var(--color-primary, #2563eb);
+      }
+
+      .detail-breadcrumb-separator {
+        margin: 0 8px;
+        color: #94a3b8;
+      }
+
+      .detail-loading {
+        max-width: 760px;
+        margin: 40px auto;
+        padding: 32px;
+        text-align: center;
+      }
+
+      .detail-footer-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .detail-footer-copy {
+        margin: 0;
+        max-width: 620px;
+        color: var(--color-text-secondary, #64748b);
+        font-size: 0.9rem;
+        line-height: 1.7;
+      }
+
+      /* =========================================
+   DYNAMIC SOURCE CODE PREVIEW
+========================================= */
+
+      .source-preview {
+        margin-top: 32px;
+        padding: 18px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: #f8faff;
+      }
+
+      .source-preview[hidden] {
+        display: none !important;
+      }
+
+      .source-preview-heading {
+        margin-bottom: 6px;
+        color: #102b57;
+        font-size: 1.45rem;
+        font-weight: 800;
+      }
+
+      .source-preview-description {
+        margin-bottom: 18px;
+        color: #64748b;
+        font-size: 0.92rem;
+        line-height: 1.7;
+      }
+
+      .source-preview-layout {
+        display: grid;
+        grid-template-columns: minmax(200px, 0.8fr) minmax(0, 1.6fr);
+        gap: 14px;
+        align-items: stretch;
+      }
+
+      .source-file-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        max-height: 520px;
+        overflow: auto;
+        padding: 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background: #fff;
+      }
+
+      .source-file-button {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        width: 100%;
+        padding: 12px;
+        border: 1px solid transparent;
+        border-radius: 9px;
+        background: transparent;
+        color: #102b57;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .source-file-button:hover {
+        background: #f1f6ff;
+      }
+
+      .source-file-button.is-active {
+        border-color: #c9ddff;
+        background: #e4efff;
+        color: #155dfb;
+      }
+
+      .source-file-icon {
+        flex-shrink: 0;
+        font-size: 1.15rem;
+      }
+
+      .source-file-name {
+        display: block;
+        overflow-wrap: anywhere;
+        font-size: 0.88rem;
+        font-weight: 750;
+      }
+
+      .source-file-description {
+        display: block;
+        margin-top: 4px;
+        color: #64748b;
+        font-size: 0.78rem;
+        line-height: 1.5;
+      }
+
+      .source-code-panel {
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid #26364b;
+        border-radius: 12px;
+        background: #172231;
+      }
+
+      .source-code-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border-bottom: 1px solid #334155;
+        background: #fff;
+      }
+
+      .source-code-filename {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        color: #102b57;
+        font-size: 0.9rem;
+        font-weight: 750;
+      }
+
+      .source-code-language {
+        display: inline-block;
+        margin-top: 4px;
+        color: #64748b;
+        font-size: 0.75rem;
+      }
+
+      .source-copy-button {
+        flex-shrink: 0;
+        min-height: 38px;
+        padding: 8px 12px;
+        border: 1px solid #cbdaf0;
+        border-radius: 8px;
+        background: #fff;
+        color: #102b57;
+        font-size: 0.8rem;
+        font-weight: 750;
+        cursor: pointer;
+      }
+
+      .source-copy-button:hover {
+        background: #eff6ff;
+      }
+
+      .source-copy-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .source-code-content {
+        max-height: 520px;
+        overflow: auto;
+        margin: 0;
+        padding: 18px;
+        color: #dbeafe;
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 0.82rem;
+        line-height: 1.75;
+        tab-size: 2;
+        white-space: pre;
+      }
+
+      .source-code-content code {
+        font: inherit;
+      }
+
+      .source-preview-message {
+        padding: 18px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 10px;
+        background: #fff;
+        color: #64748b;
+        font-size: 0.9rem;
+        line-height: 1.7;
+      }
+
+      .source-preview-message[hidden] {
+        display: none;
+      }
+
+      @media (max-width: 760px) {
+        .source-preview {
+          padding: 12px;
+        }
+
+        .source-preview-layout {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .source-file-list {
+          max-height: 220px;
+        }
+
+        .source-code-toolbar {
+          align-items: flex-start;
+        }
+
+        .source-code-content {
+          max-height: 420px;
+          font-size: 0.76rem;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .detail-header-inner {
+          min-height: 68px;
+          gap: 12px;
+        }
+
+        .detail-header-nav {
+          gap: 14px;
+        }
+
+        .detail-header-nav a {
+          font-size: 0.82rem;
+        }
+
+        .detail-main {
+          padding-top: 24px;
+          padding-bottom: 48px;
+        }
+
+        .detail-breadcrumb {
+          margin-bottom: 20px;
+        }
+
+        .detail-footer-inner {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 12px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <header class="site-header">
+      <div class="container detail-header-inner">
+        <a
+          class="brand"
+          href="../index.html"
+          aria-label="QEDeveloper — Beranda"
+        >
+          <span class="brand-mark" aria-hidden="true">QE</span>
+          <span>QEDeveloper</span>
+        </a>
+
+        <nav class="detail-header-nav" aria-label="Navigasi utama">
+          <a href="../index.html#kategori">Kategori</a>
+          <a href="../index.html#tools">Katalog</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main id="product-detail-page" class="detail-main">
+      <div class="container">
+        <nav class="detail-breadcrumb" aria-label="Breadcrumb">
+          <a href="../index.html">Beranda</a>
+          <span class="detail-breadcrumb-separator" aria-hidden="true">
+            /
+          </span>
+          <a href="../index.html#tools">Katalog</a>
+          <span class="detail-breadcrumb-separator" aria-hidden="true">
+            /
+          </span>
+          <span aria-current="page">Detail Produk</span>
+        </nav>
+
+        <div id="product-detail-content" aria-live="polite" aria-busy="true">
+          <div class="loading-card detail-loading" role="status">
+            <p>Memuat detail produk...</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="container detail-footer-inner">
+        <a class="brand" href="../index.html">
+          <span class="brand-mark" aria-hidden="true">QE</span>
+          <span>QEDeveloper</span>
+        </a>
+
+        <p class="detail-footer-copy">
+          Aplikasi siap pakai, template praktis, dan kode siap pakai untuk
+          membantu pekerjaan menjadi lebih mudah.
+          <br />
+          © <span id="current-year"></span> QEDeveloper.
+        </p>
+      </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/tools.js"></script>
+    <script src="../assets/js/ui.js"></script>
+    <script src="../assets/js/detail.js"></script>
+
+    <script>
+      // Detail.js tetap menjadi pengelola data produk.
+      // Script ini hanya mengatur status loading pada kontainer.
+      document.addEventListener("DOMContentLoaded", () => {
+        const container = document.querySelector("#product-detail-content");
+
+        if (container) {
+          const observer = new MutationObserver(() => {
+            const loading = container.querySelector('[role="status"]');
+            container.setAttribute("aria-busy", String(Boolean(loading)));
+          });
+
+          observer.observe(container, {
+            childList: true,
+            subtree: true,
+          });
+
+          container.setAttribute(
+            "aria-busy",
+            String(Boolean(container.querySelector('[role="status"]'))),
+          );
+        }
+      });
+    </script>
+  </body>
+</html>

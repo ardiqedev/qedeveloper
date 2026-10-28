@@ -1,0 +1,397 @@
+/* =========================================
+   QEDEVELOPER - AFFILIATE CARD
+   Premium Minimalis
+========================================= */
+
+#affiliate-section {
+  margin-top: 32px;
+}
+
+#affiliate-section > h2 {
+  margin-bottom: 8px;
+  color: #142b50;
+  font-size: clamp(1.25rem, 2vw, 1.65rem);
+  font-weight: 750;
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+}
+
+#affiliate-section > p {
+  margin-bottom: 22px;
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* Daftar card */
+#affiliate-products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+}
+
+/* Card utama */
+#affiliate-products-list .affiliate-card {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch;
+
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid #e1e9f5;
+  border-radius: 20px;
+
+  box-shadow: 0 4px 18px rgba(20, 43, 80, 0.035);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+#affiliate-products-list .affiliate-card:hover {
+  border-color: #c8d8ef;
+  box-shadow: 0 10px 28px rgba(20, 43, 80, 0.075);
+  transform: translateY(-2px);
+}
+
+/* Gambar produk */
+#affiliate-products-list .affiliate-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 4 / 5;
+
+  overflow: hidden;
+  background: #f4f7fb;
+  border-radius: 14px;
+}
+
+#affiliate-products-list .affiliate-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+#affiliate-products-list .affiliate-image span {
+  font-size: 2.5rem;
+}
+
+/* Informasi produk */
+#affiliate-products-list .affiliate-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 2px 0;
+}
+
+/* Badge Shopee */
+#affiliate-products-list .affiliate-badge {
+  display: inline-flex;
+  align-items: center;
+
+  margin-bottom: 10px;
+  padding: 6px 12px;
+
+  color: #d83b25;
+  background: #fff0ec;
+  border-radius: 999px;
+
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* Nama produk */
+#affiliate-products-list .affiliate-content h3 {
+  margin: 0 0 10px;
+  color: #142b50;
+
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  font-weight: 750;
+  line-height: 1.55;
+  letter-spacing: -0.015em;
+
+  overflow-wrap: anywhere;
+}
+
+/* Harga produk */
+#affiliate-products-list .affiliate-price {
+  margin: 0 0 12px;
+
+  color: #ed452f;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+/* Deskripsi */
+#affiliate-products-list .affiliate-content > p:not(.affiliate-price) {
+  margin: 0 0 20px;
+  color: #64748b;
+
+  font-size: 0.94rem;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+/* Tombol */
+#affiliate-products-list .affiliate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  margin-top: auto;
+}
+
+#affiliate-products-list .affiliate-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 46px;
+  padding: 12px 18px;
+
+  border: 1px solid transparent;
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* Tombol lihat produk */
+#affiliate-products-list .affiliate-actions > .affiliate-button:first-child {
+  color: #ffffff;
+  background: #f04432;
+  box-shadow: 0 3px 8px rgba(240, 68, 50, 0.12);
+}
+
+#affiliate-products-list
+  .affiliate-actions
+  > .affiliate-button:first-child:hover {
+  background: #d93626;
+  box-shadow: 0 5px 14px rgba(240, 68, 50, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Tombol WhatsApp */
+#affiliate-products-list .affiliate-button-whatsapp {
+  color: #ffffff;
+  background: #19c765;
+  box-shadow: 0 3px 8px rgba(25, 199, 101, 0.12);
+}
+
+#affiliate-products-list .affiliate-button-whatsapp:hover {
+  color: #ffffff;
+  background: #12ad55;
+  box-shadow: 0 5px 14px rgba(25, 199, 101, 0.2);
+  transform: translateY(-1px);
+}
+
+#affiliate-products-list .whatsapp-icon {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Fokus keyboard */
+#affiliate-products-list .affiliate-button:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 3px;
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 768px) {
+  #affiliate-products-list .affiliate-card {
+    grid-template-columns: 140px minmax(0, 1fr);
+    gap: 16px;
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  #affiliate-products-list .affiliate-price {
+    font-size: 1.2rem;
+  }
+
+  #affiliate-products-list .affiliate-content > p:not(.affiliate-price) {
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+  #affiliate-section {
+    margin-top: 26px;
+  }
+
+  #affiliate-section > p {
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+  }
+
+  #affiliate-products-list {
+    gap: 14px;
+  }
+
+  #affiliate-products-list .affiliate-card {
+    grid-template-columns: 104px minmax(0, 1fr);
+    gap: 12px;
+    padding: 11px;
+    border-radius: 14px;
+    transform: none;
+  }
+
+  #affiliate-products-list .affiliate-card:hover {
+    transform: none;
+  }
+
+  #affiliate-products-list .affiliate-image {
+    aspect-ratio: 3 / 4;
+    border-radius: 10px;
+  }
+
+  #affiliate-products-list .affiliate-badge {
+    margin-bottom: 7px;
+    padding: 5px 9px;
+    font-size: 0.69rem;
+  }
+
+  #affiliate-products-list .affiliate-content h3 {
+    margin-bottom: 7px;
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  #affiliate-products-list .affiliate-price {
+    margin-bottom: 8px;
+    font-size: 1.08rem;
+  }
+
+  #affiliate-products-list .affiliate-content > p:not(.affiliate-price) {
+    margin-bottom: 12px;
+    font-size: 0.81rem;
+    line-height: 1.6;
+  }
+
+  #affiliate-products-list .affiliate-actions {
+    gap: 8px;
+  }
+
+  #affiliate-products-list .affiliate-button {
+    min-height: 40px;
+    padding: 10px 11px;
+    border-radius: 9px;
+    font-size: 0.78rem;
+  }
+
+  #affiliate-products-list .whatsapp-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* HP sangat kecil: tombol tersusun vertikal */
+@media (max-width: 360px) {
+  #affiliate-products-list .affiliate-card {
+    grid-template-columns: 1fr;
+  }
+
+  #affiliate-products-list .affiliate-image {
+    width: 100%;
+    max-height: 220px;
+    aspect-ratio: 4 / 3;
+  }
+
+  #affiliate-products-list .affiliate-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #affiliate-products-list .affiliate-button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* Badge Shopee dan harga dalam satu baris */
+#affiliate-products-list .affiliate-content {
+  position: relative;
+}
+
+#affiliate-products-list .affiliate-badge {
+  margin-bottom: 10px;
+}
+
+/* Harga tetap berada di baris badge */
+#affiliate-products-list .affiliate-price {
+  align-self: flex-start;
+  margin: 0 0 10px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ed452f;
+}
+
+/* Baris badge + harga */
+#affiliate-products-list .affiliate-content {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  align-items: center;
+  column-gap: 12px;
+}
+
+/* Judul, deskripsi, dan tombol memenuhi lebar card */
+#affiliate-products-list .affiliate-content h3,
+#affiliate-products-list .affiliate-content > p:not(.affiliate-price),
+#affiliate-products-list .affiliate-actions {
+  grid-column: 1 / -1;
+}
+
+#affiliate-products-list .affiliate-content h3 {
+  grid-row: 2;
+}
+
+#affiliate-products-list .affiliate-price {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: start;
+}
+
+#affiliate-products-list .affiliate-badge {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+}
+
+#affiliate-products-list .affiliate-cart-icon {
+  display: block;
+  flex-shrink: 0;
+}

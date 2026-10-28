@@ -1,0 +1,462 @@
+/* =========================================
+   QEDEVELOPER - RESPONSIVE STYLES
+   Desktop, tablet, dan mobile
+========================================= */
+
+/* =========================================
+   1. LAPTOP DAN LAYAR MENENGAH
+========================================= */
+
+@media (max-width: 1100px) {
+  .hero-grid {
+    gap: 36px;
+  }
+
+  .hero-visual {
+    min-height: 350px;
+  }
+
+  .hero-shape {
+    width: 320px;
+  }
+
+  .hero-note {
+    right: -4px;
+  }
+
+  .category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tools-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .how-grid {
+    gap: 40px;
+  }
+}
+
+/* =========================================
+   2. TABLET DAN HP LANDSCAPE
+========================================= */
+
+@media (max-width: 768px) {
+  .container {
+    width: min(var(--container), calc(100% - 36px));
+  }
+
+  .section {
+    padding-block: 54px;
+  }
+
+  .section-compact {
+    padding-block: 12px 30px;
+  }
+
+  /* HEADER */
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .desktop-nav {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: flex;
+  }
+
+  .desktop-only {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+
+  /* HERO */
+
+  .hero {
+    padding-block: 48px 42px;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .hero-copy {
+    max-width: 100%;
+  }
+
+  .hero-copy h1 {
+    max-width: 620px;
+    margin-block: 18px;
+    font-size: clamp(2.2rem, 7vw, 3.3rem);
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+  }
+
+  .hero-visual {
+    width: 100%;
+    min-height: 350px;
+  }
+
+  .hero-shape {
+    width: 300px;
+  }
+
+  .hero-portrait {
+    width: 230px;
+  }
+
+  .hero-note {
+    right: max(0px, calc(50% - 210px));
+    bottom: 25px;
+  }
+
+  .hero-signature {
+    left: max(0px, calc(50% - 210px));
+    bottom: 20px;
+  }
+
+  .trust-list {
+    gap: 10px 16px;
+  }
+
+  /* SEARCH */
+
+  .search-section {
+    padding-block: 20px 28px;
+  }
+
+  .search-box {
+    gap: 8px;
+    padding-left: 12px;
+  }
+
+  /* CATEGORY */
+
+  .category-grid {
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .category-card {
+    min-height: 100px;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .cat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 1.15rem;
+  }
+
+  /* TOOLS */
+
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .tools-grid {
+    gap: 16px;
+  }
+
+  /* HOW IT WORKS */
+
+  .how-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .steps {
+    gap: 20px;
+  }
+
+  /* FOOTER */
+
+  .site-footer {
+    padding-block: 38px 24px;
+  }
+
+  .site-footer > .container {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+
+  .footer-links {
+    justify-content: flex-start;
+  }
+
+  .site-footer .copyright {
+    grid-column: auto;
+  }
+}
+
+/* =========================================
+   3. HP
+========================================= */
+
+@media (max-width: 520px) {
+  .container {
+    width: calc(100% - 30px);
+  }
+
+  .section {
+    padding-block: 44px;
+  }
+
+  .kicker {
+    font-size: 0.72rem;
+  }
+
+  .eyebrow {
+    padding: 7px 10px;
+    font-size: 0.68rem;
+  }
+
+  /* HEADER */
+
+  .header-inner {
+    gap: 12px;
+  }
+
+  .brand {
+    font-size: 1rem;
+  }
+
+  /* HERO */
+
+  .hero {
+    padding-block: 36px 28px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2rem, 9vw, 2.7rem);
+    letter-spacing: -0.045em;
+  }
+
+  .hero-desc {
+    font-size: 0.94rem;
+  }
+
+  .hero-actions {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .hero-actions .button {
+    width: 100%;
+  }
+
+  .trust-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 9px;
+    margin-top: 22px;
+  }
+
+  .hero-visual {
+    min-height: 300px;
+  }
+
+  .hero-shape {
+    width: 250px;
+  }
+
+  .hero-portrait {
+    width: 195px;
+    border-width: 5px;
+  }
+
+  .hero-note {
+    right: 0;
+    bottom: 12px;
+    max-width: 155px;
+    padding: 11px 12px;
+  }
+
+  .hero-note strong {
+    font-size: 0.78rem;
+  }
+
+  .hero-note p {
+    font-size: 0.7rem;
+  }
+
+  .hero-signature {
+    bottom: 10px;
+    left: 0;
+    max-width: 145px;
+    padding: 10px 12px;
+    font-size: 0.72rem;
+  }
+
+  /* SEARCH */
+
+  .search-box {
+    flex-wrap: wrap;
+    padding: 8px;
+  }
+
+  .search-box input {
+    flex: 1 1 150px;
+    padding: 10px 6px;
+    font-size: 0.9rem;
+  }
+
+  .search-box .button {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+
+  /* CATEGORY */
+
+  .category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .category-card {
+    min-height: 0;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .category-card h3 {
+    font-size: 0.88rem;
+  }
+
+  .category-card p {
+    font-size: 0.75rem;
+  }
+
+  .cat-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* TOOLS */
+
+  .tools-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .section-heading h2 {
+    font-size: 1.8rem;
+  }
+
+  .section-heading p {
+    font-size: 0.9rem;
+  }
+
+  /* STEPS */
+
+  .steps li {
+    gap: 13px;
+  }
+
+  .steps li::before {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .steps li h3 {
+    font-size: 1rem;
+  }
+
+  .steps li p {
+    font-size: 0.86rem;
+  }
+
+  /* FOOTER */
+
+  .site-footer {
+    padding-block: 32px 20px;
+  }
+
+  .footer-links {
+    gap: 12px 18px;
+  }
+
+  .footer-links a {
+    font-size: 0.82rem;
+  }
+}
+
+/* =========================================
+   4. HP KECIL
+========================================= */
+
+@media (max-width: 360px) {
+  .container {
+    width: calc(100% - 24px);
+  }
+
+  .hero-copy h1 {
+    font-size: 1.9rem;
+  }
+
+  .hero-visual {
+    min-height: 270px;
+  }
+
+  .hero-shape {
+    width: 220px;
+  }
+
+  .hero-portrait {
+    width: 175px;
+  }
+
+  .hero-note {
+    max-width: 135px;
+    padding: 9px;
+  }
+
+  .hero-signature {
+    max-width: 125px;
+    padding: 8px;
+    font-size: 0.68rem;
+  }
+
+  .category-card {
+    padding: 11px;
+  }
+
+  .category-card h3 {
+    font-size: 0.82rem;
+  }
+}
+
+/* =========================================
+   5. REDUCE MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .category-card {
+    transition: none;
+  }
+
+  .category-card:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>QEDeveloper — Tools Digital Siap Pakai</title>
+
+    <meta
+      name="description"
+      content="Kumpulan tools digital dan template siap pakai untuk membantu pekerjaan administrasi menjadi lebih mudah, cepat, dan praktis."
+    />
+
+    <meta name="theme-color" content="#102a56" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/variables.css" />
+    <link rel="stylesheet" href="assets/css/reset.css" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/layout.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/pages.css" />
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+
+    <!-- JavaScript -->
+    <script src="assets/js/config.js" defer></script>
+    <script src="assets/js/data.js" defer></script>
+    <script src="assets/js/utils.js" defer></script>
+    <script src="assets/js/api.js" defer></script>
+    <script src="assets/js/tools.js" defer></script>
+    <script src="assets/js/ui.js" defer></script>
+    <script src="assets/js/search.js" defer></script>
+    <script src="assets/js/app.js" defer></script>
+  </head>
+
+  <body>
+    <!-- =====================================
+       HEADER
+  ====================================== -->
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="#beranda" aria-label="QEDeveloper Beranda">
+          <span class="brand-mark">QE</span>
+          <span data-site-name>QEDeveloper</span>
+        </a>
+
+        <nav
+          class="desktop-nav"
+          data-site-navigation
+          aria-label="Navigasi utama"
+        >
+          <a href="#beranda">Beranda</a>
+          <a href="#tools">Tools</a>
+          <a href="#kategori">Kategori</a>
+          <a href="#cara-menggunakan">Cara Menggunakan</a>
+        </nav>
+
+        <button
+          class="mobile-menu"
+          type="button"
+          data-mobile-menu-toggle
+          aria-label="Buka menu"
+          aria-expanded="false"
+          aria-controls="mobile-navigation"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
+      <nav
+        class="mobile-navigation"
+        id="mobile-navigation"
+        data-mobile-menu
+        aria-label="Navigasi mobile"
+        hidden
+      >
+        <a href="#beranda">Beranda</a>
+        <a href="#tools">Jelajahi Tools</a>
+        <a href="#kategori">Kategori</a>
+        <a href="#cara-menggunakan">Cara Menggunakan</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- =====================================
+         HERO
+    ====================================== -->
+
+      <section class="hero" id="beranda">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <span class="eyebrow">
+              Tools praktis untuk pekerjaan sehari-hari
+            </span>
+
+            <h1>
+              Pekerjaan lebih mudah dengan
+              <span>tools digital siap pakai.</span>
+            </h1>
+
+            <p class="hero-desc">
+              Temukan template, sistem administrasi, dan tools digital yang bisa
+              langsung kamu gunakan. Tidak harus mulai dari nol.
+            </p>
+
+            <div class="hero-actions">
+              <a class="button primary large" href="#tools"> Jelajahi Tools </a>
+
+              <a class="button secondary large" href="#cara-menggunakan">
+                Cara Menggunakan
+              </a>
+            </div>
+
+            <ul class="trust-list">
+              <li>Praktis digunakan</li>
+              <li>Pilihan tools gratis</li>
+              <li>Panduan penggunaan</li>
+            </ul>
+          </div>
+
+          <div class="hero-visual">
+            <div class="hero-shape" aria-hidden="true"></div>
+
+            <div class="hero-portrait">
+              <img
+                src="assets/images/foto-profil.png"
+                alt="Foto kreator QEDeveloper"
+                loading="eager"
+                decoding="async"
+                onerror="
+                  this.hidden = true;
+                  this.nextElementSibling.hidden = false;
+                "
+              />
+
+              <div class="portrait-placeholder" hidden>
+                <span aria-hidden="true">👨‍💻</span>
+                <p>Foto kreator QEDeveloper</p>
+              </div>
+            </div>
+
+            <div class="hero-note hero-dashboard">
+              <img
+                src="assets/images/dashboard-preview.jpg"
+                alt="Preview dashboard aplikasi QEDeveloper"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="dashboard-caption"> Aplikasi siap pakai </span>
+            </div>
+
+            <div class="hero-signature">Belajar dari contoh nyata.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================
+         SEARCH
+    ====================================== -->
+
+      <section class="search-section" aria-label="Cari tools">
+        <div class="container">
+          <form class="search-box" id="tool-search-form" role="search">
+            <label class="visually-hidden" for="tool-search">
+              Cari tools
+            </label>
+
+            <input
+              id="tool-search"
+              type="search"
+              name="q"
+              placeholder="Cari tools, misalnya absensi..."
+              autocomplete="off"
+            />
+
+            <button class="button primary" type="submit">Cari</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- =====================================
+         CATEGORY
+    ====================================== -->
+
+      <!-- =====================================
+     CATEGORY FILTER
+====================================== -->
+
+      <section class="section section-compact" id="kategori">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <span class="kicker">Jelajahi kategori</span>
+              <h2>Temukan aplikasi sesuai kebutuhanmu</h2>
+              <p>
+                Pilih kategori untuk menampilkan aplikasi yang relevan dengan
+                pekerjaanmu.
+              </p>
+            </div>
+          </div>
+
+          <div class="category-filter">
+            <label for="category-select">Kategori aplikasi</label>
+
+            <select
+              id="category-select"
+              class="category-select"
+              aria-label="Filter berdasarkan kategori"
+            >
+              <option value="semua" data-category-filter="semua">
+                Semua aplikasi
+              </option>
+              <option value="administrasi" data-category-filter="administrasi">
+                Administrasi
+              </option>
+              <option value="pendidikan" data-category-filter="pendidikan">
+                Pendidikan
+              </option>
+              <option value="keuangan" data-category-filter="keuangan">
+                Keuangan
+              </option>
+              <option
+                value="produktivitas"
+                data-category-filter="produktivitas"
+              >
+                Produktivitas
+              </option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================
+         TOOLS CATALOG
+    ====================================== -->
+
+      <section class="section tools-section" id="tools">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <span class="kicker">Katalog QEDeveloper</span>
+              <h2>Temukan tools pilihanmu</h2>
+
+              <p>
+                Pilih tools yang sesuai, pelajari cara menggunakannya, lalu
+                sesuaikan dengan kebutuhanmu.
+              </p>
+
+              <p id="tools-result-count" class="mt-2" aria-live="polite">
+                Memuat katalog tools...
+              </p>
+            </div>
+          </div>
+
+          <div class="tools-grid" id="tools-grid">
+            <div class="loading-card">
+              <p>Memuat katalog tools...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================
+         HOW IT WORKS
+    ====================================== -->
+
+      <section class="section" id="cara-menggunakan">
+        <div class="container how-grid">
+          <div>
+            <span class="kicker">Mudah untuk memulai</span>
+
+            <h2>Dari memilih tools sampai siap digunakan.</h2>
+
+            <p>
+              Tidak perlu bingung memulai dari mana. Ikuti langkah sederhana ini
+              untuk memanfaatkan tools yang tersedia.
+            </p>
+
+            <a class="button primary mt-3" href="#tools"> Pilih Tools </a>
+          </div>
+
+          <ol class="steps">
+            <li>
+              <div>
+                <h3>Pilih tools yang dibutuhkan</h3>
+                <p>
+                  Cari berdasarkan kategori atau kata kunci sesuai pekerjaanmu.
+                </p>
+              </div>
+            </li>
+
+            <li>
+              <div>
+                <h3>Buka detail dan tutorial</h3>
+                <p>Pelajari fungsi tools dan ikuti panduan penggunaannya.</p>
+              </div>
+            </li>
+
+            <li>
+              <div>
+                <h3>Gunakan dan sesuaikan</h3>
+                <p>
+                  Dapatkan file yang tersedia, lalu sesuaikan dengan kebutuhan
+                  pekerjaanmu.
+                </p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- =====================================
+         CLOSING CTA
+    ====================================== -->
+
+      <section class="section section-compact">
+        <div class="container text-center">
+          <span class="kicker">Mulai sekarang</span>
+
+          <h2>Kerja lebih praktis, satu langkah setiap kali.</h2>
+
+          <p class="mt-2">
+            Jelajahi tools yang tersedia dan temukan cara kerja yang lebih
+            sederhana.
+          </p>
+
+          <a class="button primary large mt-3" href="#tools">
+            Jelajahi Katalog
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <main id="product-detail" hidden></main>
+
+    <!-- =====================================
+       FOOTER
+  ====================================== -->
+
+    <footer class="site-footer">
+      <div class="container">
+        <div>
+          <a class="brand" href="#beranda">
+            <span class="brand-mark">QE</span>
+            <span data-footer-brand>QEDeveloper</span>
+          </a>
+
+          <p>
+            Tools digital dan template praktis untuk membantu pekerjaan menjadi
+            lebih mudah dan terstruktur.
+          </p>
+        </div>
+
+        <nav class="footer-links" aria-label="Navigasi footer">
+          <a href="#beranda">Beranda</a>
+          <a href="#tools">Tools</a>
+          <a href="#kategori">Kategori</a>
+          <a href="#cara-menggunakan">Panduan</a>
+
+          <a
+            href="#"
+            data-social-link="tiktok"
+            target="_blank"
+            rel="noopener noreferrer"
+            hidden
+          >
+            TikTok
+          </a>
+
+          <a
+            href="#"
+            data-social-link="instagram"
+            target="_blank"
+            rel="noopener noreferrer"
+            hidden
+          >
+            Instagram
+          </a>
+
+          <a
+            href="#"
+            data-social-link="contact"
+            target="_blank"
+            rel="noopener noreferrer"
+            hidden
+          >
+            Kontak
+          </a>
+        </nav>
+
+        <p class="copyright">
+          © <span data-current-year>2026</span>
+          <span data-footer-brand>QEDeveloper</span>. Dibuat untuk membantu
+          pekerjaan menjadi lebih praktis.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
