@@ -140,7 +140,24 @@
       const safeName = this.escapeHTML(name);
       const safeType = this.escapeHTML(type);
       const safeCategory = this.escapeHTML(category);
-      const safeDescription = this.escapeHTML(description);
+
+      // Deskripsi lengkap dengan format HTML
+      const descriptionHTML = this.formatProductDescription(description);
+
+      // Ringkasan singkat di bawah judul produk
+      const descriptionPlain = String(description)
+        .replace(/#{1,3}\s*/g, "")
+        .replace(/\*\*/g, "")
+        .replace(/`/g, "")
+        .replace(/(?:^|\n)\s*[-•]\s*/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      const descriptionSummary = this.escapeHTML(
+        descriptionPlain.length > 180
+          ? descriptionPlain.slice(0, 180) + "..."
+          : descriptionPlain,
+      );
 
       const thumbnailHTML = this.isValidHttpUrl(thumbnail)
         ? `
@@ -207,7 +224,7 @@
           <h1 class="product-detail-title">${safeName}</h1>
 
           <p class="product-detail-description">
-            ${safeDescription}
+            ${descriptionSummary}
           </p>
 
           <div class="product-detail-section">
@@ -267,9 +284,12 @@
             </div>
           </section>
 
-          <section class="product-detail-section">
+          <section class="product-detail-section product-description-section">
             <h2>Tentang Produk</h2>
-            <p>${safeDescription}</p>
+
+            <div class="product-description-content">
+              ${descriptionHTML}
+            </div>
           </section>
 
           <section class="product-detail-section">
@@ -322,6 +342,102 @@
 
       this.initSourcePreview(sourceCodeUrl);
       this.loadAffiliateProducts(product.id || product.ID_PRODUK || "");
+    },
+
+    /* =========================================
+   FORMAT DESKRIPSI PRODUK
+   Markdown sederhana menjadi HTML aman
+========================================= */
+
+    formatProductDescription(description) {
+      let source = String(description || "")
+        .replace(/\r\n?/g, "\n")
+        .trim();
+
+      if (!source) {
+        return "<p>Belum ada deskripsi untuk produk ini.</p>";
+      }
+
+      // Membantu mengenali heading/list jika teks
+      // dari Spreadsheet tidak memiliki line break.
+      source = source
+        .replace(/\s+(?=#{1,3}\s)/g, "\n")
+        .replace(/\s+(?=-\s|•\s)/g, "\n");
+
+      const lines = source.split("\n");
+      const output = [];
+
+      let paragraph = [];
+      let inList = false;
+
+      const formatInline = (text) => {
+        return this.escapeHTML(text)
+          .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+          .replace(/`([^`]+)`/g, "<code>$1</code>");
+      };
+
+      const flushParagraph = () => {
+        if (!paragraph.length) return;
+
+        output.push(`<p>${formatInline(paragraph.join(" "))}</p>`);
+
+        paragraph = [];
+      };
+
+      const closeList = () => {
+        if (!inList) return;
+
+        output.push("</ul>");
+        inList = false;
+      };
+
+      lines.forEach((rawLine) => {
+        const line = rawLine.trim();
+
+        if (!line) {
+          flushParagraph();
+          closeList();
+          return;
+        }
+
+        // Heading Markdown
+        const heading = line.match(/^(#{1,3})\s+(.+)$/);
+
+        if (heading) {
+          flushParagraph();
+          closeList();
+
+          const level = heading[1].length + 1;
+          const content = formatInline(heading[2]);
+
+          output.push(`<h${level}>${content}</h${level}>`);
+          return;
+        }
+
+        // Bullet list
+        const listItem = line.match(/^(?:[-*•]\s+|✅\s*)(.+)$/);
+
+        if (listItem) {
+          flushParagraph();
+
+          if (!inList) {
+            output.push('<ul class="product-description-list">');
+            inList = true;
+          }
+
+          output.push(`<li>${formatInline(listItem[1])}</li>`);
+          return;
+        }
+
+        // Paragraf biasa
+        closeList();
+        paragraph.push(line);
+      });
+
+      flushParagraph();
+      closeList();
+
+      return output.join("\n");
     },
 
     /* =====================================

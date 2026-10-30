@@ -62,7 +62,23 @@
       if (!tool) return "";
 
       const title = this.escapeHTML(tool.title);
-      const description = this.escapeHTML(tool.description);
+
+      // Ringkasan deskripsi khusus card Beranda
+      const descriptionText = String(tool.description || "")
+        .replace(/#{1,3}\s*/g, "")
+        .replace(/\*\*/g, "")
+        .replace(/`/g, "")
+        .replace(/(?:^|\n)\s*[-*•]\s*/g, " ")
+        .replace(/✅|✨|🎯|🛠️|📥|📌/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      const description = this.escapeHTML(
+        descriptionText.length > 140
+          ? descriptionText.slice(0, 140).trimEnd() + "..."
+          : descriptionText,
+      );
+
       const category = this.escapeHTML(this.getCategoryLabel(tool.category));
 
       const tags = Array.isArray(tool.tags) ? tool.tags : [];

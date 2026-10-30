@@ -1,0 +1,78 @@
+/* =========================================
+   PRODUCT DESCRIPTION - RICH CONTENT
+========================================= */
+
+.product-description-content {
+  color: #64748b;
+  font-size: 0.96rem;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+.product-description-content p {
+  margin: 0 0 16px;
+}
+
+.product-description-content h3 {
+  margin: 26px 0 12px;
+  color: #142b50;
+  font-size: 1.15rem;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.product-description-content h4 {
+  margin: 20px 0 10px;
+  color: #142b50;
+  font-size: 1.03rem;
+  font-weight: 700;
+}
+
+.product-description-content strong {
+  color: #142b50;
+  font-weight: 700;
+}
+
+.product-description-content ul {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 12px 0 20px;
+  padding-left: 22px;
+}
+
+.product-description-content li {
+  padding-left: 4px;
+}
+
+.product-description-content li::marker {
+  color: #e8492f;
+}
+
+.product-description-content code {
+  padding: 2px 6px;
+  color: #2457a7;
+  background: #f1f5fb;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.product-description-content > :last-child {
+  margin-bottom: 0;
+}
+
+/* =========================================
+   HOME TOOL CARD - DESCRIPTION
+========================================= */
+
+.tool-card-body > p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+
+  line-height: 1.65;
+  margin-bottom: 14px;
+
+  overflow-wrap: anywhere;
+}
