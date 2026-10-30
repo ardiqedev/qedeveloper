@@ -338,8 +338,15 @@
         .trim()
         .slice(0, 160);
 
-      const canonicalUrl = new URL(window.location.href);
-      canonicalUrl.hash = "";
+      const canonicalUrl = new URL(
+        "/pages/detail.html",
+        window.location.origin,
+      );
+
+      canonicalUrl.searchParams.set(
+        "id",
+        product.id || product.ID_PRODUK || "",
+      );
 
       const seoUrl = canonicalUrl.href;
 
@@ -390,7 +397,13 @@
         setMeta('meta[property="og:image"]', "property", thumbnail);
 
         setMeta('meta[name="twitter:image"]', "name", thumbnail);
+
+        setMeta('meta[property="og:image:alt"]', "property", `Preview ${name}`);
       }
+
+      setMeta('meta[name="twitter:title"]', "name", seoTitle);
+
+      setMeta('meta[name="twitter:description"]', "name", seoDescription);
 
       // Canonical URL
       let canonicalLink = document.querySelector('link[rel="canonical"]');
