@@ -10,7 +10,7 @@
     // Ganti dengan URL Web App Apps Script yang berakhiran /exec.
 
     baseUrl:
-      "https://script.google.com/macros/s/AKfycbzNixB5Xw6tULg_H9SuZj1wpWowHSkH8-JDZAeTKY98jeQw6BIqwuV5yoVLX1W_5qfX/exec",
+      "https://script.google.com/macros/s/AKfycbygCrSh8IvzjXlK35h1cUroISx1DKj-jQXeLW9t2cK8lNbSics42OIsj_QoGw_AozbDAw/exec",
 
     timeout: 30000,
 
