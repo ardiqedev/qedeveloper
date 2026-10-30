@@ -327,18 +327,81 @@
         getComputedStyle(this.elements.container).cursor,
       );
 
-      document.title = `${name} — QEDeveloper`;
+      // =======================================
+      // SEO DINAMIS HALAMAN DETAIL PRODUK
+      // =======================================
 
-      const metaDescription = document.querySelector(
-        'meta[name="description"]',
-      );
+      const seoTitle = `${name} — QEDeveloper`;
 
-      if (metaDescription) {
-        metaDescription.setAttribute(
-          "content",
-          String(description).slice(0, 160),
-        );
+      const seoDescription = String(description)
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 160);
+
+      const canonicalUrl = new URL(window.location.href);
+      canonicalUrl.hash = "";
+
+      const seoUrl = canonicalUrl.href;
+
+      // Update document title
+      document.title = seoTitle;
+
+      // Helper untuk membuat atau memperbarui metadata
+      const setMeta = (selector, attribute, value) => {
+        let element = document.querySelector(selector);
+
+        if (!element) {
+          element = document.createElement("meta");
+
+          const match = selector.match(/\[(?:name|property)="([^"]+)"\]/);
+
+          if (!match) return;
+
+          const attributeName = selector.includes("[property=")
+            ? "property"
+            : "name";
+
+          element.setAttribute(attributeName, match[1]);
+          document.head.appendChild(element);
+        }
+
+        element.setAttribute("content", value);
+      };
+
+      // Meta description
+      setMeta('meta[name="description"]', "name", seoDescription);
+
+      // Open Graph
+      setMeta('meta[property="og:type"]', "property", "product");
+      setMeta('meta[property="og:site_name"]', "property", "QEDeveloper");
+      setMeta('meta[property="og:title"]', "property", seoTitle);
+      setMeta('meta[property="og:description"]', "property", seoDescription);
+      setMeta('meta[property="og:url"]', "property", seoUrl);
+
+      // Twitter Card
+      setMeta('meta[name="twitter:card"]', "name", "summary_large_image");
+
+      setMeta('meta[name="twitter:title"]', "name", seoTitle);
+
+      setMeta('meta[name="twitter:description"]', "name", seoDescription);
+
+      // Thumbnail produk sebagai gambar preview
+      if (this.isValidHttpUrl(thumbnail)) {
+        setMeta('meta[property="og:image"]', "property", thumbnail);
+
+        setMeta('meta[name="twitter:image"]', "name", thumbnail);
       }
+
+      // Canonical URL
+      let canonicalLink = document.querySelector('link[rel="canonical"]');
+
+      if (!canonicalLink) {
+        canonicalLink = document.createElement("link");
+        canonicalLink.setAttribute("rel", "canonical");
+        document.head.appendChild(canonicalLink);
+      }
+
+      canonicalLink.setAttribute("href", seoUrl);
 
       this.initSourcePreview(sourceCodeUrl);
       this.loadAffiliateProducts(product.id || product.ID_PRODUK || "");
