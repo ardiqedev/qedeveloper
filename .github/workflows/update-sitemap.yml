@@ -1,0 +1,113 @@
+
+name: Update Sitemap QEDeveloper
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 1 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update-sitemap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate sitemap
+        env:
+          QEDEV_API_URL: ${{ vars.QEDEV_API_URL }}
+        run: |
+          node <<'NODE'
+          const fs = require("fs");
+
+          async function main() {
+            const apiUrl = process.env.QEDEV_API_URL;
+
+            if (!apiUrl) {
+              throw new Error("QEDEV_API_URL belum dikonfigurasi.");
+            }
+
+            const url = new URL(apiUrl);
+            url.searchParams.set("action", "products");
+
+            const response = await fetch(url);
+            if (!response.ok) {
+              throw new Error(`API gagal: HTTP ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.success !== true || !Array.isArray(result.data)) {
+              throw new Error("Format respons API tidak sesuai.");
+            }
+
+            const productIds = [
+              ...new Set(
+                result.data
+                  .map(product => String(product.id || "").trim())
+                  .filter(Boolean)
+              )
+            ];
+
+            const urls = [
+              "https://qedstack.com/",
+              ...productIds.map(id => {
+                const detailUrl = new URL(
+                  "https://qedstack.com/pages/detail.html"
+                );
+                detailUrl.searchParams.set("id", id);
+                return detailUrl.href;
+              })
+            ];
+
+            const xmlEscape = value =>
+              value.replace(/&/g, "&amp;")
+                   .replace(/</g, "&lt;")
+                   .replace(/>/g, "&gt;")
+                   .replace(/"/g, "&quot;")
+                   .replace(/'/g, "&apos;");
+
+            const entries = urls.map(loc => `  <url>
+              <loc>${xmlEscape(loc)}</loc>
+            </url>`).join("\n");
+
+            const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+          <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+          ${entries}
+          </urlset>
+          `;
+
+            fs.writeFileSync("sitemap.xml", sitemap, "utf8");
+
+            console.log(`Sitemap berhasil dibuat: ${urls.length} URL`);
+            console.log(urls.join("\n"));
+          }
+
+          main().catch(error => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+
+      - name: Commit sitemap if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add sitemap.xml
+
+          if git diff --cached --quiet; then
+            echo "Sitemap tidak mengalami perubahan."
+          else
+            git commit -m "chore: update sitemap"
+            git push
+          fi
