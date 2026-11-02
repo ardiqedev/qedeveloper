@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Login Super Admin | QEDeveloper</title>
+
+    <link rel="stylesheet" href="../assets/css/admin.css" />
+  </head>
+
+  <body class="admin-login-page">
+    <main class="login-wrapper">
+      <section class="login-brand">
+        <div class="brand-content">
+          <div class="brand-logo">
+            <span class="logo-symbol">Q</span>
+          </div>
+
+          <h1>QEDeveloper</h1>
+          <p>Solusi Aplikasi Siap Pakai</p>
+        </div>
+
+        <div class="brand-decoration decoration-top"></div>
+        <div class="brand-decoration decoration-bottom"></div>
+      </section>
+
+      <section class="login-panel">
+        <div class="login-card">
+          <div class="login-heading">
+            <div class="login-shield">
+              <span>♢</span>
+            </div>
+
+            <h2>Super Admin</h2>
+
+            <p>Masuk ke panel administrasi QEDeveloper</p>
+          </div>
+
+          <form id="admin-login-form">
+            <div class="form-group">
+              <label for="username">Username</label>
+
+              <div class="input-wrapper">
+                <span class="input-icon">♙</span>
+
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  placeholder="Masukkan username"
+                  autocomplete="username"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="password">Password</label>
+
+              <div class="input-wrapper">
+                <span class="input-icon">♧</span>
+
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="Masukkan password"
+                  autocomplete="current-password"
+                  required
+                />
+
+                <button
+                  type="button"
+                  class="password-toggle"
+                  id="toggle-password"
+                  aria-label="Tampilkan password"
+                >
+                  ◉
+                </button>
+              </div>
+            </div>
+
+            <div class="login-options">
+              <label class="remember-option">
+                <input type="checkbox" id="remember-session" />
+                <span>Ingat sesi ini</span>
+              </label>
+            </div>
+
+            <div
+              id="login-message"
+              class="login-message"
+              role="alert"
+              aria-live="polite"
+            ></div>
+
+            <button type="submit" class="login-button" id="login-button">
+              <span>Masuk ke Dashboard</span>
+            </button>
+          </form>
+
+          <div class="login-footer">
+            <p>QEDeveloper © 2026</p>
+            <span>All rights reserved.</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/admin_js/auth.js"></script>
+  </body>
+</html>

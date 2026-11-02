@@ -43,7 +43,7 @@
       if (!id) {
         this.renderError(
           "ID produk belum tersedia",
-          "Silakan buka detail produk melalui katalog QEDeveloper.",
+          "Silakan buka detail produk melalui katalog QedStack.",
         );
         return;
       }
@@ -84,6 +84,270 @@
       }
     },
 
+    async proofBlobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          const result = String(reader.result || "");
+          resolve(result);
+        };
+
+        reader.onerror = () => {
+          reject(new Error("Gagal membaca hasil kompresi foto."));
+        };
+
+        reader.readAsDataURL(blob);
+      });
+    },
+
+    renderAccessRequestForm(accessConfig = {}) {
+      const message = document.querySelector("#source-preview-message");
+      const layout = document.querySelector("#source-preview-layout");
+
+      if (!message) return;
+
+      if (layout) layout.hidden = true;
+
+      const amount = Number(accessConfig.donationAmount || 0).toLocaleString(
+        "id-ID",
+      );
+
+      const qrisImageUrl = String(
+        accessConfig.qrisImageUrl || "../assets/images/qris-qedstack.png",
+      ).trim();
+
+      message.hidden = false;
+
+      message.innerHTML = `
+    <div class="source-access-locked">
+
+      <strong>🔐 Ajukan Akses Source Code</strong>
+
+      <p>
+       Untuk mendapatkan kode aktivasi, silakan isi
+        data berikut dan unggah bukti pembayaran.
+      </p>
+
+      <div class="access-donation-card">
+
+        <strong>🎁 Donasi Akses</strong>
+
+        <p>
+          Dapatkan kode aktivasi dengan donasi sebesar:
+        </p>
+
+        <div class="access-donation-amount">
+          Rp${amount}
+        </div>
+
+        <div class="access-qris-section">
+
+          <strong>Scan QRIS QedStack</strong>
+
+          ${
+            qrisImageUrl
+              ? `
+                <img
+                  src="${qrisImageUrl}"
+                  alt="QRIS Pembayaran QedStack"
+                  class="access-qris-image"
+                >
+              `
+              : `
+                <div class="access-qris-placeholder">
+                  QRIS belum dikonfigurasi.
+                </div>
+              `
+          }
+
+          <p>
+            Scan menggunakan DANA, GoPay, OVO,
+            atau Mobile Banking yang mendukung QRIS.
+          </p>
+
+        </div>
+
+        <p class="access-donation-validity">
+          🗓️ Masa akses: <strong>15 hari</strong>
+        </p>
+
+      </div>
+
+      <form id="access-request-form">
+
+        <label for="access-request-name">Nama Lengkap</label>
+        <input
+          type="text"
+          id="access-request-name"
+          required
+          maxlength="100"
+          placeholder="Masukkan nama lengkap"
+        >
+
+        <label for="access-request-whatsapp">Nomor WhatsApp</label>
+        <input
+          type="tel"
+          id="access-request-whatsapp"
+          required
+          maxlength="20"
+          placeholder="Contoh: 081234567890"
+        >
+
+        <label for="access-request-email">Email (Opsional)</label>
+        <input
+          type="email"
+          id="access-request-email"
+          placeholder="Masukkan email"
+        >
+
+        <label for="access-request-proof">Bukti Pembayaran</label>
+        <input
+          type="file"
+          id="access-request-proof"
+          accept="image/jpeg,image/png,image/webp"
+          required
+        >
+
+        <div id="access-proof-preview" hidden>
+          <img
+            id="access-proof-image"
+            alt="Pratinjau bukti transfer"
+            style="max-width:100%;max-height:240px;object-fit:contain;"
+          >
+
+          <p id="access-proof-size"></p>
+        </div>
+
+        <button type="submit" id="access-request-submit">
+          Kirim Permintaan Akses
+        </button>
+
+      </form>
+
+      <p id="access-request-status" role="status"></p>
+
+    </div>
+  `;
+
+      const form = document.querySelector("#access-request-form");
+      const fileInput = document.querySelector("#access-request-proof");
+      const preview = document.querySelector("#access-proof-preview");
+      const previewImage = document.querySelector("#access-proof-image");
+      const sizeInfo = document.querySelector("#access-proof-size");
+      const button = document.querySelector("#access-request-submit");
+      const status = document.querySelector("#access-request-status");
+
+      let compressedProof = null;
+      let previewUrl = "";
+
+      const formatKB = (bytes) => {
+        return (bytes / 1024).toFixed(1) + " KB";
+      };
+
+      fileInput.addEventListener("change", async () => {
+        compressedProof = null;
+        preview.hidden = true;
+        status.textContent = "";
+
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl);
+          previewUrl = "";
+        }
+
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+          status.textContent = "Pilih file gambar yang valid.";
+          fileInput.value = "";
+          return;
+        }
+
+        if (file.size > 20 * 1024 * 1024) {
+          status.textContent = "Ukuran foto asli maksimal 20 MB.";
+          fileInput.value = "";
+          return;
+        }
+
+        status.textContent = "Mengompres foto...";
+
+        try {
+          compressedProof = await this.compressProofImage(file);
+
+          previewUrl = URL.createObjectURL(compressedProof.blob);
+          previewImage.src = previewUrl;
+
+          preview.hidden = false;
+
+          sizeInfo.textContent =
+            "Ukuran asli: " +
+            formatKB(file.size) +
+            " | Setelah kompresi: " +
+            formatKB(compressedProof.compressedSize);
+
+          if (compressedProof.compressedSize < 100 * 1024) {
+            status.textContent = "Foto berhasil dikompres di bawah 100 KB.";
+          } else {
+            status.textContent =
+              "Foto berhasil dikompres, tetapi masih di atas 100 KB.";
+          }
+        } catch (error) {
+          console.error("[PROOF COMPRESSION]", error);
+          status.textContent = error.message;
+          fileInput.value = "";
+        }
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        if (!compressedProof) {
+          status.textContent = "Silakan pilih bukti transfer terlebih dahulu.";
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent = "Mengirim...";
+        status.textContent = "Sedang mengirim permintaan akses...";
+
+        try {
+          const productId = this.getProductId();
+
+          const base64 = await this.proofBlobToBase64(compressedProof.blob);
+
+          const result = await window.QEDEV_API.createAccessRequest({
+            productId,
+            name: document.querySelector("#access-request-name").value.trim(),
+            whatsapp: document
+              .querySelector("#access-request-whatsapp")
+              .value.trim(),
+            email: document.querySelector("#access-request-email").value.trim(),
+
+            proof: {
+              fileName: compressedProof.fileName,
+              mimeType: compressedProof.mimeType,
+              base64,
+            },
+          });
+
+          form.hidden = true;
+
+          status.textContent =
+            result.message ||
+            "Permintaan akses berhasil dikirim. Silakan menunggu verifikasi admin.";
+        } catch (error) {
+          console.error("[ACCESS REQUEST]", error);
+
+          status.textContent =
+            error.message || "Permintaan gagal dikirim. Silakan coba kembali.";
+
+          button.disabled = false;
+          button.textContent = "Kirim Permintaan Akses";
+        }
+      });
+    },
+
     renderLoading() {
       this.elements.container.setAttribute("aria-busy", "true");
 
@@ -97,7 +361,7 @@
     },
 
     renderProduct(product) {
-      const name = product.name || product.NAMA_PRODUK || "Produk QEDeveloper";
+      const name = product.name || product.NAMA_PRODUK || "Produk QedStack";
 
       const type = String(product.type || product.JENIS || "").trim();
 
@@ -136,6 +400,16 @@
         product.sourceUrl ||
         product.SOURCE_URL ||
         "";
+
+      const accessType = String(product.accessType || "GRATIS")
+        .trim()
+        .toUpperCase();
+
+      const donationAmount = Number(product.donationAmount || 0);
+      const validityDays = Number(product.validityDays || 15);
+
+      const accessLabel =
+        accessType === "DONASI" ? "AKSES DONASI" : "AKSES GRATIS";
 
       const safeName = this.escapeHTML(name);
       const safeType = this.escapeHTML(type);
@@ -218,7 +492,8 @@
           <div class="product-detail-meta">
             ${safeCategory ? `<span class="tag">${safeCategory}</span>` : ""}
             ${safeType ? `<span class="tag">${safeType}</span>` : ""}
-            <span class="status">Gratis</span>
+           
+            <span class="status">${accessLabel}</span>
           </div>
 
           <h1 class="product-detail-title">${safeName}</h1>
@@ -331,7 +606,7 @@
       // SEO DINAMIS HALAMAN DETAIL PRODUK
       // =======================================
 
-      const seoTitle = `${name} — QEDeveloper`;
+      const seoTitle = `${name} — QedStack`;
 
       const seoDescription = String(description)
         .replace(/\s+/g, " ")
@@ -416,7 +691,13 @@
 
       canonicalLink.setAttribute("href", seoUrl);
 
-      this.initSourcePreview(sourceCodeUrl);
+      this.currentSourceCodeUrl = sourceCodeUrl;
+
+      this.initSourcePreview(sourceCodeUrl, {
+        accessType: accessType,
+        donationAmount: donationAmount,
+        validityDays: validityDays,
+      });
       this.loadAffiliateProducts(product.id || product.ID_PRODUK || "");
     },
 
@@ -780,24 +1061,34 @@
       }
     },
 
-    async initSourcePreview(sourceCodeUrl) {
+    async initSourcePreview(sourceCodeUrl, accessConfig = {}) {
       const section = document.querySelector("#source-preview");
       const message = document.querySelector("#source-preview-message");
+      const layout = document.querySelector("#source-preview-layout");
 
       if (!section || !message) return;
 
-      // Produk tanpa URL TXT tetap menampilkan detail normal.
-      if (!this.isValidHttpUrl(sourceCodeUrl)) {
-        return;
-      }
+      if (!this.isValidHttpUrl(sourceCodeUrl)) return;
 
       section.hidden = false;
       message.hidden = false;
+
+      const productId = this.getProductId();
+      const isDonation = accessConfig.accessType === "DONASI";
+
+      // Periksa token perangkat yang tersimpan.
+      const token = isDonation
+        ? window.QEDEV_API.getAccessToken(productId)
+        : "";
+
+      // Produk DONASI tanpa token menampilkan card akses.
+      if (isDonation && !token) {
+        this.renderAccessEntry(accessConfig);
+        return;
+      }
       message.textContent = "Memuat source code...";
 
       try {
-        const productId = this.getProductId();
-
         if (
           !window.QEDEV_API ||
           typeof window.QEDEV_API.getSourceCode !== "function"
@@ -812,10 +1103,6 @@
           throw new Error("Isi source code tidak ditemukan.");
         }
 
-        if (!sourceText.trim()) {
-          throw new Error("File TXT masih kosong.");
-        }
-
         this.sourceFiles = this.parseSourceText(sourceText);
         this.activeFileIndex = 0;
 
@@ -825,22 +1112,947 @@
 
         this.renderSourceFiles();
 
-        message.hidden = true;
+        if (layout) layout.hidden = false;
 
-        document.querySelector("#source-preview-layout").hidden = false;
+        // Tampilkan informasi status akses.
+        if (isDonation) {
+          let expiredAt = "";
+
+          try {
+            const savedMeta = localStorage.getItem(
+              "qedev_access_meta_" + productId,
+            );
+
+            if (savedMeta) {
+              const meta = JSON.parse(savedMeta);
+              expiredAt = meta.expiredAt || "";
+            }
+          } catch (error) {
+            console.warn("[ACCESS META] Gagal membaca informasi akses:", error);
+          }
+
+          let accessInfo = `
+    <div class="source-access-status">
+      <strong>🟢 AKSES AKTIF</strong>
+      <p>Perangkat ini berhasil diaktivasi.</p>
+  `;
+
+          if (expiredAt) {
+            const expiryDate = new Date(expiredAt);
+
+            if (!isNaN(expiryDate.getTime())) {
+              const formattedDate = expiryDate.toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              });
+
+              const remaining = Math.max(
+                0,
+                Math.ceil((expiryDate.getTime() - Date.now()) / 86400000),
+              );
+
+              accessInfo += `
+        <p>Berlaku sampai: <strong>${formattedDate}</strong></p>
+        <p>Sisa masa akses: <strong>${remaining} hari</strong></p>
+      `;
+            }
+          } else {
+            accessInfo += `
+      <p>Tanggal kedaluwarsa belum tersedia.</p>
+    `;
+          }
+
+          accessInfo += `</div>`;
+
+          message.innerHTML = accessInfo;
+          message.hidden = false;
+        } else {
+          message.hidden = true;
+        }
       } catch (error) {
         console.error("[SOURCE PREVIEW]", error);
+
+        if (layout) layout.hidden = true;
+
+        if (isDonation) {
+          // Token yang ditolak backend tidak boleh terus digunakan.
+          window.QEDEV_API.clearAccessToken(productId);
+
+          try {
+            localStorage.removeItem("qedev_access_meta_" + productId);
+          } catch (storageError) {
+            console.warn(
+              "[ACCESS META] Gagal menghapus informasi akses:",
+              storageError,
+            );
+          }
+
+          this.renderActivationForm(
+            accessConfig,
+            "Token tidak valid atau masa akses telah berakhir. Silakan masukkan kode akses kembali.",
+          );
+
+          return;
+        }
 
         message.hidden = false;
         message.textContent =
           "Preview belum dapat dimuat. " +
           (error.message || "Periksa URL dan akses file TXT.") +
           " Tombol download tetap dapat digunakan jika tersedia.";
-
-        const layout = document.querySelector("#source-preview-layout");
-
-        if (layout) layout.hidden = true;
       }
+    },
+
+    renderActivationForm(accessConfig = {}, errorMessage = "") {
+      const message = document.querySelector("#source-preview-message");
+      const layout = document.querySelector("#source-preview-layout");
+
+      if (!message) return;
+
+      if (layout) layout.hidden = true;
+
+      const amount = Number(accessConfig.donationAmount || 0).toLocaleString(
+        "id-ID",
+      );
+
+      const validity = Number(accessConfig.validityDays || 15);
+
+      message.hidden = false;
+
+      message.innerHTML = `
+    <div class="source-access-locked">
+      <strong>🔒 Aktivasi Source Code</strong>
+
+      <p>
+        Produk ini memerlukan kode aktivasi
+        untuk membuka source code.
+      </p>
+
+      <div class="access-donation-card">
+        <strong>🎁 Donasi Akses</strong>
+
+        <p>
+          Dapatkan kode aktivasi dengan donasi sebesar:
+        </p>
+
+        <div class="access-donation-amount">
+          Rp${amount}
+        </div>
+
+        <div class="access-qris-section">
+          <strong>Scan QRIS QedStack</strong>
+
+          <img
+            src="${accessConfig.qrisImageUrl || ""}"
+            alt="QRIS Pembayaran QedStack"
+            class="access-qris-image"
+          >
+
+          <p>
+            Scan menggunakan DANA, GoPay, OVO,
+            atau Mobile Banking yang mendukung QRIS.
+          </p>
+        </div>
+
+        <p>
+          🗓️ Masa akses: <strong>15 hari</strong>
+        </p>
+      </div>
+      <p>Masa akses: <strong>${validity} hari</strong></p>
+
+      ${
+        errorMessage
+          ? `<p class="source-access-error">${this.escapeHTML(errorMessage)}</p>`
+          : ""
+      }
+
+      <form id="source-activation-form">
+        <label for="source-activation-code">
+          Kode Aktivasi
+        </label>
+
+        <input
+          type="text"
+          id="source-activation-code"
+          name="code"
+          placeholder="Masukkan kode aktivasi"
+          autocomplete="off"
+          required
+        >
+
+        <button type="submit" id="source-activation-submit">
+          Aktifkan Akses
+        </button>
+      </form>
+
+      <p id="source-activation-status" role="status"></p>
+    </div>
+  `;
+
+      const form = document.querySelector("#source-activation-form");
+      const input = document.querySelector("#source-activation-code");
+      const button = document.querySelector("#source-activation-submit");
+      const status = document.querySelector("#source-activation-status");
+
+      if (!form || !input || !button || !status) return;
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const code = input.value.trim();
+
+        if (!code) {
+          status.textContent = "Kode aktivasi wajib diisi.";
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent = "Memproses...";
+        status.textContent = "Memeriksa kode aktivasi...";
+
+        try {
+          const productId = this.getProductId();
+
+          const activation = await window.QEDEV_API.activateAccess(
+            productId,
+            code,
+          );
+
+          // Simpan informasi masa berlaku untuk tampilan.
+          if (activation && activation.expiredAt) {
+            try {
+              localStorage.setItem(
+                "qedev_access_meta_" + productId,
+                JSON.stringify({
+                  expiredAt: activation.expiredAt,
+                }),
+              );
+            } catch (error) {
+              console.warn(
+                "[ACCESS META] Gagal menyimpan informasi akses:",
+                error,
+              );
+            }
+          }
+
+          status.textContent = "Aktivasi berhasil. Memuat source code...";
+
+          await this.initSourcePreview(this.currentSourceCodeUrl, accessConfig);
+        } catch (error) {
+          console.error("[SOURCE ACTIVATION]", error);
+
+          status.textContent =
+            error.message || "Aktivasi gagal. Silakan coba kembali.";
+
+          button.disabled = false;
+          button.textContent = "Aktifkan Akses";
+        }
+      });
+    },
+
+    renderAccessEntry(accessConfig = {}) {
+      const message = document.querySelector("#source-preview-message");
+      const layout = document.querySelector("#source-preview-layout");
+
+      if (!message) return;
+
+      if (layout) layout.hidden = true;
+
+      const amount = Number(accessConfig.donationAmount || 0).toLocaleString(
+        "id-ID",
+      );
+
+      const validity = Number(accessConfig.validityDays || 15);
+
+      message.hidden = false;
+
+      message.innerHTML = `
+    <div class="source-access-entry">
+
+      <div class="source-access-entry-header">
+        <div>
+          <strong>🔒 Struktur Source Code</strong>
+          <p>
+            Seluruh kode disimpan dalam satu file TXT.
+            Ajukan akses untuk membuka source code.
+          </p>
+        </div>
+
+        <span class="source-access-badge">
+          Akses Terkunci
+        </span>
+      </div>
+
+      <div class="source-access-entry-content">
+
+        <div class="source-access-donation">
+          <strong>🎁 Akses Source Code</strong>
+
+          <p>
+            Donasi untuk mendapatkan kode aktivasi.
+          </p>
+
+          <div class="source-access-price">
+            Rp${amount}
+          </div>
+
+          <p class="source-access-validity">
+            🗓 Masa akses: ${validity} hari
+            <br>
+            Setelah masa akses habis, kode aktivasi tidak berlaku lagi.
+          </p>
+        </div>
+
+        <div class="source-access-actions">
+
+          <button
+            type="button"
+            id="open-access-request"
+            class="source-access-primary"
+          >
+            ✈ Ajukan Akses Source Code
+          </button>
+
+          <div class="source-access-separator">
+            <span>atau</span>
+          </div>
+
+          <form id="source-access-code-form">
+
+            <label for="source-access-code">
+              Sudah memiliki kode aktivasi?
+            </label>
+
+            <input
+              type="text"
+              id="source-access-code"
+              placeholder="Masukkan kode aktivasi"
+              autocomplete="off"
+              required
+            >
+
+            <button
+              type="submit"
+              id="source-access-activate"
+              class="source-access-secondary"
+            >
+              ✓ Aktifkan Akses
+            </button>
+
+            <p
+              id="source-access-code-status"
+              role="status"
+            ></p>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+  `;
+
+      // Tombol pengajuan membuka modal.
+      document
+        .querySelector("#open-access-request")
+        .addEventListener("click", () => {
+          this.openAccessRequestModal(accessConfig);
+        });
+
+      // Aktivasi kode langsung dari card.
+      const form = document.querySelector("#source-access-code-form");
+      const input = document.querySelector("#source-access-code");
+      const button = document.querySelector("#source-access-activate");
+      const status = document.querySelector("#source-access-code-status");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const code = input.value.trim();
+
+        if (!code) {
+          status.textContent = "Kode aktivasi wajib diisi.";
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent = "Memproses...";
+        status.textContent = "Memeriksa kode aktivasi...";
+
+        try {
+          const productId = this.getProductId();
+
+          const activation = await window.QEDEV_API.activateAccess(
+            productId,
+            code,
+          );
+
+          if (activation && activation.expiredAt) {
+            localStorage.setItem(
+              "qedev_access_meta_" + productId,
+              JSON.stringify({
+                expiredAt: activation.expiredAt,
+              }),
+            );
+          }
+
+          await this.initSourcePreview(this.currentSourceCodeUrl, accessConfig);
+        } catch (error) {
+          status.textContent =
+            error.message || "Aktivasi gagal. Silakan coba kembali.";
+
+          button.disabled = false;
+          button.textContent = "✓ Aktifkan Akses";
+        }
+      });
+    },
+
+    openAccessRequestModal(accessConfig = {}) {
+      // Hindari modal ganda.
+      document.querySelector("#access-request-modal")?.remove();
+
+      const amount = Number(accessConfig.donationAmount || 0).toLocaleString(
+        "id-ID",
+      );
+
+      const validity = Number(accessConfig.validityDays || 15);
+
+      // Lokasi gambar QRIS.
+      const qrisImageUrl = String(
+        accessConfig.qrisImageUrl || "../assets/images/qris-qedstack.png",
+      ).trim();
+
+      const modal = document.createElement("div");
+      modal.id = "access-request-modal";
+      modal.className = "access-modal-overlay";
+
+      modal.innerHTML = `
+    <div class="access-modal" role="dialog" aria-modal="true"
+         aria-labelledby="access-modal-title">
+
+      <button type="button" class="access-modal-close"
+              id="access-modal-close" aria-label="Tutup">
+        &times;
+      </button>
+
+      <div class="access-modal-heading">
+        <div class="access-modal-icon">⌘</div>
+        <div>
+          <h3 id="access-modal-title">Ajukan Akses Source Code</h3>
+          <p>Lengkapi data berikut untuk mengajukan akses.</p>
+        </div>
+      </div>
+
+      <div class="access-modal-content">
+
+        <div class="access-modal-donation">
+
+          <strong>🎁 Donasi Akses</strong>
+
+          <p>Dapatkan kode aktivasi dengan donasi sebesar:</p>
+
+          <div class="access-modal-price">Rp${amount}</div>
+
+          <div class="access-modal-qris">
+
+            <strong>Scan QRIS QedStack</strong>
+
+            ${
+              qrisImageUrl
+                ? `
+                  <img
+                    src="${qrisImageUrl}"
+                    alt="QRIS Pembayaran QedStack"
+                    class="access-modal-qris-image"
+                  >
+
+                  <button
+                    type="button"
+                    id="access-qris-expand"
+                    class="access-qris-expand"
+                  >
+                    Perbesar QRIS
+                  </button>
+                `
+                : `
+                  <div class="access-modal-qris-placeholder">
+                    QRIS belum tersedia.
+                  </div>
+                `
+            }
+
+            <p>
+              Scan menggunakan DANA, GoPay, OVO,
+              atau Mobile Banking yang mendukung QRIS.
+            </p>
+
+          </div>
+
+          <p class="access-modal-validity">
+            🗓 Masa akses: <strong>${validity} hari</strong>
+          </p>
+
+        </div>
+
+        <form id="access-request-form" class="access-request-form">
+
+          <div class="access-form-field">
+            <label for="access-request-name">Nama Lengkap *</label>
+            <input
+              type="text"
+              id="access-request-name"
+              maxlength="100"
+              placeholder="Masukkan nama lengkap"
+              required
+            >
+          </div>
+
+          <div class="access-form-field">
+            <label for="access-request-whatsapp">Nomor WhatsApp *</label>
+            <input
+              type="tel"
+              id="access-request-whatsapp"
+              maxlength="20"
+              placeholder="Contoh: 081234567890"
+              required
+            >
+          </div>
+
+          <div class="access-form-field">
+            <label for="access-request-email">Email (Opsional)</label>
+            <input
+              type="email"
+              id="access-request-email"
+              maxlength="150"
+              placeholder="Masukkan alamat email"
+            >
+          </div>
+
+          <div class="access-form-field">
+            <label for="access-request-proof">Bukti Pembayaran *</label>
+            <input
+              type="file"
+              id="access-request-proof"
+              accept="image/jpeg,image/png,image/webp"
+              required
+            >
+
+            <div id="access-proof-preview" class="access-proof-preview"
+                 hidden>
+              <img id="access-proof-image" alt="Pratinjau bukti transfer">
+              <p id="access-proof-size"></p>
+            </div>
+
+            <p class="access-proof-hint">
+              JPG, PNG, atau WEBP. Kompresi otomatis dengan target di bawah 100 KB.
+            </p>
+          </div>
+
+          <p id="access-request-status"
+             class="access-request-status" role="status"></p>
+
+          <div class="access-modal-actions">
+            <button type="button" id="access-request-cancel"
+                    class="access-modal-button access-modal-cancel">
+              Batal
+            </button>
+
+            <button type="submit" id="access-request-submit"
+                    class="access-modal-button access-modal-submit">
+              ✈ Kirim Permintaan
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  `;
+
+      document.body.appendChild(modal);
+      // Preview QRIS ukuran besar.
+      const qrisExpandButton = modal.querySelector("#access-qris-expand");
+
+      if (qrisExpandButton && qrisImageUrl) {
+        const lightbox = document.createElement("div");
+
+        lightbox.className = "access-qris-lightbox";
+        lightbox.innerHTML = `
+    <div class="access-qris-lightbox-content">
+      <button
+        type="button"
+        class="access-qris-lightbox-close"
+        aria-label="Tutup preview"
+      >
+        &times;
+      </button>
+
+      <img
+        src="${qrisImageUrl}"
+        alt="QRIS Pembayaran QEDeveloper"
+      >
+
+      <p>Scan QRIS QEDeveloper</p>
+    </div>
+  `;
+
+        modal.appendChild(lightbox);
+
+        const closeQrisPreview = () => {
+          lightbox.classList.remove("active");
+        };
+
+        qrisExpandButton.addEventListener("click", () => {
+          lightbox.classList.add("active");
+        });
+
+        lightbox
+          .querySelector(".access-qris-lightbox-close")
+          .addEventListener("click", closeQrisPreview);
+
+        lightbox.addEventListener("click", (event) => {
+          if (event.target === lightbox) {
+            closeQrisPreview();
+          }
+        });
+
+        // Tutup preview menggunakan tombol ESC.
+        const handleEscape = (event) => {
+          if (event.key === "Escape") {
+            closeQrisPreview();
+          }
+        };
+
+        document.addEventListener("keydown", handleEscape);
+
+        // Bersihkan listener ESC saat modal pengajuan ditutup.
+        const observer = new MutationObserver(() => {
+          if (!document.body.contains(modal)) {
+            document.removeEventListener("keydown", handleEscape);
+            observer.disconnect();
+          }
+        });
+
+        observer.observe(document.body, {
+          childList: true,
+        });
+      }
+
+      const form = modal.querySelector("#access-request-form");
+      const fileInput = modal.querySelector("#access-request-proof");
+      const preview = modal.querySelector("#access-proof-preview");
+      const previewImage = modal.querySelector("#access-proof-image");
+      const sizeInfo = modal.querySelector("#access-proof-size");
+      const status = modal.querySelector("#access-request-status");
+      const submitButton = modal.querySelector("#access-request-submit");
+
+      let compressedProof = null;
+      let previewUrl = "";
+
+      const closeModal = () => {
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl);
+          previewUrl = "";
+        }
+
+        modal.remove();
+      };
+
+      modal
+        .querySelector("#access-modal-close")
+        .addEventListener("click", closeModal);
+
+      modal
+        .querySelector("#access-request-cancel")
+        .addEventListener("click", closeModal);
+
+      modal.addEventListener("click", (event) => {
+        if (event.target === modal) closeModal();
+      });
+
+      // Kompresi bukti transfer.
+      fileInput.addEventListener("change", async () => {
+        compressedProof = null;
+        preview.hidden = true;
+        status.textContent = "";
+
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl);
+          previewUrl = "";
+        }
+
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+          status.textContent = "Format foto harus JPG, PNG, atau WEBP.";
+          fileInput.value = "";
+          return;
+        }
+
+        if (file.size > 20 * 1024 * 1024) {
+          status.textContent = "Ukuran foto asli maksimal 20 MB.";
+          fileInput.value = "";
+          return;
+        }
+
+        fileInput.disabled = true;
+        status.textContent = "Sedang mengompres foto...";
+
+        try {
+          compressedProof = await this.compressProofImage(file);
+
+          if (compressedProof.compressedSize > 5 * 1024 * 1024) {
+            throw new Error(
+              "Ukuran foto hasil kompresi melebihi batas upload.",
+            );
+          }
+
+          previewUrl = URL.createObjectURL(compressedProof.blob);
+          previewImage.src = previewUrl;
+          preview.hidden = false;
+
+          sizeInfo.textContent =
+            "Ukuran asli: " +
+            (file.size / 1024).toFixed(1) +
+            " KB | Setelah kompresi: " +
+            (compressedProof.compressedSize / 1024).toFixed(1) +
+            " KB";
+
+          status.textContent =
+            compressedProof.compressedSize < 100 * 1024
+              ? "Foto berhasil dikompres di bawah 100 KB."
+              : "Foto sudah dikompres, tetapi masih di atas 100 KB.";
+        } catch (error) {
+          compressedProof = null;
+          fileInput.value = "";
+          status.textContent = error.message || "Gagal mengompres foto.";
+        } finally {
+          fileInput.disabled = false;
+        }
+      });
+
+      // Kirim permintaan akses.
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        if (!compressedProof) {
+          status.textContent = "Silakan pilih bukti transfer terlebih dahulu.";
+          return;
+        }
+
+        const name = modal.querySelector("#access-request-name").value.trim();
+
+        const whatsapp = modal
+          .querySelector("#access-request-whatsapp")
+          .value.trim();
+
+        const email = modal.querySelector("#access-request-email").value.trim();
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Mengirim...";
+        status.textContent = "Sedang mengirim permintaan akses...";
+
+        try {
+          const base64 = await this.proofBlobToBase64(compressedProof.blob);
+
+          const result = await window.QEDEV_API.createAccessRequest({
+            productId: this.getProductId(),
+            name,
+            whatsapp,
+            email,
+            proof: {
+              fileName: compressedProof.fileName,
+              mimeType: compressedProof.mimeType,
+              base64,
+            },
+          });
+
+          if (!result) {
+            throw new Error("Respons permintaan akses tidak valid.");
+          }
+
+          // Tutup modal pengajuan.
+          closeModal();
+
+          // Tampilkan pesan sukses.
+          this.showAccessRequestSuccess(name, whatsapp);
+        } catch (error) {
+          console.error("[ACCESS REQUEST]", error);
+
+          status.textContent =
+            error.message || "Permintaan gagal dikirim. Silakan coba kembali.";
+
+          submitButton.disabled = false;
+          submitButton.textContent = "✈ Kirim Permintaan";
+        }
+      });
+
+      modal.querySelector("#access-request-name").focus();
+    },
+
+    showAccessRequestSuccess(name, whatsapp) {
+      document.querySelector("#access-success-modal")?.remove();
+
+      const safeName = this.escapeHTML(name);
+      const safeWhatsapp = this.escapeHTML(whatsapp);
+
+      const modal = document.createElement("div");
+      modal.id = "access-success-modal";
+      modal.className = "access-modal-overlay";
+
+      modal.innerHTML = `
+    <div class="access-success-modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="access-success-title">
+
+      <button type="button"
+              class="access-modal-close"
+              id="access-success-close"
+              aria-label="Tutup">
+        &times;
+      </button>
+
+      <div class="access-success-icon">✓</div>
+
+      <h3 id="access-success-title">
+        Terima Kasih, ${safeName}!
+      </h3>
+
+      <p>
+        Data Anda telah kami terima.
+        Permintaan akses berhasil.
+      </p>
+
+      <p>
+        Kode aktivasi akan segera kami kirimkan
+        melalui WhatsApp ke nomor
+        <strong>${safeWhatsapp}</strong>.
+      </p>
+
+      <button type="button"
+              id="access-success-done"
+              class="access-modal-button access-modal-submit">
+        Tutup
+      </button>
+
+    </div>
+  `;
+
+      document.body.appendChild(modal);
+
+      const closeSuccess = () => modal.remove();
+
+      modal
+        .querySelector("#access-success-close")
+        .addEventListener("click", closeSuccess);
+
+      modal
+        .querySelector("#access-success-done")
+        .addEventListener("click", closeSuccess);
+
+      modal.addEventListener("click", (event) => {
+        if (event.target === modal) closeSuccess();
+      });
+    },
+
+    /**
+     * Kompres foto bukti transfer menggunakan Canvas.
+     * Target ukuran: di bawah 100 KB.
+     */
+    async compressProofImage(file) {
+      const MAX_SIZE = 100 * 1024;
+      const MAX_DIMENSION = 1600;
+
+      if (!file || !file.type.startsWith("image/")) {
+        throw new Error("Silakan pilih file gambar.");
+      }
+
+      if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+        throw new Error("Format foto harus JPG, PNG, atau WEBP.");
+      }
+
+      const image = await new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve(img);
+        };
+
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error("Foto tidak dapat dibaca."));
+        };
+
+        img.src = url;
+      });
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      let width = image.width;
+      let height = image.height;
+
+      const scale = Math.min(1, MAX_DIMENSION / Math.max(width, height));
+
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
+
+      let quality = 0.85;
+      let result = null;
+
+      for (let attempt = 0; attempt < 20; attempt++) {
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(image, 0, 0, width, height);
+
+        result = await new Promise((resolve) => {
+          canvas.toBlob(resolve, "image/jpeg", quality);
+        });
+
+        if (!result) {
+          throw new Error("Gagal mengompres foto.");
+        }
+
+        if (result.size < MAX_SIZE) {
+          return {
+            blob: result,
+            fileName: "bukti-transfer.jpg",
+            mimeType: "image/jpeg",
+            originalSize: file.size,
+            compressedSize: result.size,
+          };
+        }
+
+        if (quality > 0.35) {
+          quality -= 0.1;
+        } else {
+          width = Math.round(width * 0.85);
+          height = Math.round(height * 0.85);
+          quality = 0.75;
+        }
+
+        if (width < 320 || height < 320) break;
+      }
+
+      if (result && result.size <= 5 * 1024 * 1024) {
+        return {
+          blob: result,
+          fileName: "bukti-transfer.jpg",
+          mimeType: "image/jpeg",
+          originalSize: file.size,
+          compressedSize: result.size,
+        };
+      }
+
+      throw new Error(
+        "Ukuran foto terlalu besar untuk dikompres. Silakan gunakan foto lain.",
+      );
     },
 
     parseSourceText(sourceText) {
@@ -1047,7 +2259,7 @@
         </div>
       `;
 
-      document.title = `${title} — QEDeveloper`;
+      document.title = `${title} — QedStack`;
     },
 
     isValidHttpUrl(value) {

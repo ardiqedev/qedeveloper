@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101d35" />
+    <title>Super Admin | QEDeveloper</title>
+
+    <style>
+      :root {
+        --navy: #101d35;
+        --navy-soft: #1c2d4d;
+        --gold: #d6ad55;
+        --gold-light: #f5e9c9;
+        --white: #ffffff;
+        --bg: #f4f6fa;
+        --text: #253047;
+        --muted: #778197;
+        --border: #e7eaf0;
+        --green: #16865c;
+        --red: #d34c4c;
+        --orange: #d28a25;
+        --radius: 14px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Arial, sans-serif;
+      }
+
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .topbar {
+        background: var(--navy);
+        color: white;
+        padding: 16px 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-icon {
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        background: var(--gold);
+        color: var(--navy);
+        font-weight: 800;
+        font-size: 19px;
+      }
+
+      .brand-name {
+        font-weight: 700;
+        font-size: 17px;
+      }
+
+      .brand-subtitle {
+        font-size: 11px;
+        color: #c3ccda;
+        margin-top: 4px;
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .admin-label {
+        font-size: 12px;
+        color: #d8deea;
+      }
+
+      .btn-logout {
+        border: 1px solid #52617b;
+        color: white;
+        background: transparent;
+        padding: 9px 14px;
+        border-radius: 9px;
+        font-size: 12px;
+      }
+
+      .btn-logout:hover {
+        background: #263957;
+      }
+
+      .container {
+        width: min(1120px, calc(100% - 32px));
+        margin: 28px auto;
+      }
+
+      .page-heading {
+        margin-bottom: 22px;
+      }
+
+      .page-heading h1 {
+        margin: 0 0 7px;
+        color: var(--navy);
+        font-size: 24px;
+      }
+
+      .page-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-bottom: 24px;
+      }
+
+      .stat-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 12px;
+      }
+
+      .stat-value {
+        font-size: 27px;
+        font-weight: 700;
+        color: var(--navy);
+      }
+
+      .stat-pending {
+        border-top: 3px solid var(--orange);
+      }
+
+      .stat-sent {
+        border-top: 3px solid var(--green);
+      }
+
+      .stat-rejected {
+        border-top: 3px solid var(--red);
+      }
+
+      .panel {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      .panel-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .panel-header h2 {
+        margin: 0;
+        font-size: 16px;
+        color: var(--navy);
+      }
+
+      .panel-header p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 6px;
+        padding: 14px 20px 0;
+        border-bottom: 1px solid var(--border);
+        overflow-x: auto;
+      }
+
+      .tab-button {
+        border: 0;
+        background: transparent;
+        padding: 12px 14px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+        border-bottom: 3px solid transparent;
+      }
+
+      .tab-button.active {
+        color: var(--navy);
+        border-bottom-color: var(--gold);
+      }
+
+      .request-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 20px;
+      }
+
+      .request-count {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .btn-refresh {
+        border: 1px solid var(--border);
+        background: white;
+        color: var(--navy);
+        padding: 9px 13px;
+        border-radius: 8px;
+        font-size: 12px;
+      }
+
+      .request-list {
+        padding: 0 20px 20px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .request-card {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .request-info {
+        min-width: 0;
+      }
+
+      .request-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 7px;
+      }
+
+      .request-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px 14px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .request-actions {
+        flex-shrink: 0;
+      }
+
+      .btn-detail {
+        border: 0;
+        background: var(--navy);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 12px;
+      }
+
+      .btn-detail:hover {
+        background: var(--navy-soft);
+      }
+
+      .empty-state {
+        padding: 35px 15px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .status-pending {
+        color: #9a6416;
+        background: #fff3dc;
+      }
+
+      .status-sent {
+        color: #14734e;
+        background: #e1f5eb;
+      }
+
+      .status-rejected {
+        color: #b33e3e;
+        background: #fde9e9;
+      }
+
+      /* Detail modal */
+
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background: rgba(10, 20, 38, 0.65);
+        padding: 20px;
+        overflow-y: auto;
+      }
+
+      .modal.show {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+      }
+
+      .modal-dialog {
+        width: min(650px, 100%);
+        background: white;
+        border-radius: 16px;
+        margin: auto;
+        overflow: hidden;
+      }
+
+      .modal-header {
+        background: var(--navy);
+        color: white;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .modal-header h2 {
+        font-size: 16px;
+        margin: 0;
+      }
+
+      .btn-close {
+        background: transparent;
+        border: 0;
+        color: white;
+        font-size: 25px;
+        line-height: 1;
+      }
+
+      .modal-body {
+        padding: 20px;
+      }
+
+      .detail-section {
+        margin-bottom: 22px;
+      }
+
+      .detail-section h3 {
+        margin: 0 0 13px;
+        color: var(--navy);
+        font-size: 13px;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .detail-item {
+        min-width: 0;
+      }
+
+      .detail-label {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        margin-bottom: 5px;
+      }
+
+      .detail-value {
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+      }
+
+      .proof-box {
+        background: var(--bg);
+        border: 1px dashed #cbd2df;
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 12px;
+      }
+
+      .proof-box a {
+        color: #245da7;
+        font-weight: 700;
+      }
+
+      .code-box {
+        background: var(--gold-light);
+        border: 1px solid #ead7a8;
+        border-radius: 10px;
+        padding: 16px;
+        text-align: center;
+      }
+
+      .code-label {
+        color: #80652d;
+        font-size: 11px;
+        margin-bottom: 8px;
+      }
+
+      .access-code {
+        font-size: 24px;
+        letter-spacing: 3px;
+        font-weight: 800;
+        color: var(--navy);
+        overflow-wrap: anywhere;
+      }
+
+      .code-note {
+        margin-top: 9px;
+        color: #80652d;
+        font-size: 11px;
+        line-height: 1.5;
+      }
+
+      .admin-note {
+        width: 100%;
+        min-height: 85px;
+        padding: 11px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        resize: vertical;
+        outline: none;
+        font-size: 13px;
+      }
+
+      .admin-note:focus {
+        border-color: var(--gold);
+      }
+
+      .modal-footer {
+        padding: 16px 20px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 9px;
+      }
+
+      .btn {
+        border: 0;
+        padding: 11px 15px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .btn-primary {
+        background: var(--navy);
+        color: white;
+      }
+
+      .btn-gold {
+        background: var(--gold);
+        color: var(--navy);
+      }
+
+      .btn-success {
+        background: var(--green);
+        color: white;
+      }
+
+      .btn-danger {
+        background: var(--red);
+        color: white;
+      }
+
+      .btn-secondary {
+        background: #edf0f5;
+        color: var(--text);
+      }
+
+      .alert {
+        display: none;
+        padding: 12px 15px;
+        border-radius: 9px;
+        margin-bottom: 16px;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .alert.show {
+        display: block;
+      }
+
+      .alert-error {
+        background: #fde9e9;
+        color: #a52d2d;
+      }
+
+      .alert-success {
+        background: #e1f5eb;
+        color: #14734e;
+      }
+
+      .alert-info {
+        background: #eaf1fc;
+        color: #245da7;
+      }
+
+      .footer {
+        text-align: center;
+        color: var(--muted);
+        font-size: 11px;
+        padding: 25px 10px;
+      }
+
+      @media (max-width: 650px) {
+        .topbar {
+          padding: 13px 15px;
+        }
+
+        .admin-label {
+          display: none;
+        }
+
+        .container {
+          width: calc(100% - 24px);
+          margin: 20px auto;
+        }
+
+        .page-heading h1 {
+          font-size: 21px;
+        }
+
+        .stats {
+          gap: 8px;
+        }
+
+        .stat-card {
+          padding: 13px 10px;
+        }
+
+        .stat-label {
+          font-size: 10px;
+          line-height: 1.4;
+        }
+
+        .stat-value {
+          font-size: 22px;
+        }
+
+        .request-card {
+          align-items: flex-start;
+        }
+
+        .request-actions {
+          align-self: center;
+        }
+
+        .btn-detail {
+          padding: 9px 11px;
+        }
+
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .modal {
+          padding: 10px;
+        }
+
+        .modal-footer .btn {
+          flex: 1 1 100%;
+        }
+      }
+
+      /* =========================================
+   FIX PREVIEW BUKTI TRANSFER
+========================================= */
+
+      #detail-proof {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+      }
+
+      #detail-proof .proof-preview {
+        width: 100% !important;
+        height: 300px !important;
+        min-height: 0 !important;
+        max-height: 300px !important;
+
+        padding: 12px !important;
+        box-sizing: border-box !important;
+
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+
+        overflow: hidden !important;
+
+        background: #f3f5f9;
+        border: 1px solid #dce2ed;
+        border-radius: 10px;
+      }
+
+      #detail-proof .proof-preview a {
+        display: flex !important;
+        width: 100% !important;
+        height: 100% !important;
+
+        justify-content: center !important;
+        align-items: center !important;
+
+        overflow: hidden !important;
+      }
+
+      #detail-proof img.proof-image {
+        display: block !important;
+
+        width: auto !important;
+        height: auto !important;
+
+        max-width: 100% !important;
+        max-height: 270px !important;
+
+        object-fit: contain !important;
+        object-position: center !important;
+
+        border-radius: 6px;
+        cursor: zoom-in;
+      }
+
+      #detail-proof .proof-error {
+        padding: 20px;
+        color: #b42318;
+        text-align: center;
+      }
+
+      #detail-proof .proof-open-link {
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 13px;
+      }
+
+      #detail-proof .proof-pdf {
+        display: block;
+        width: 100%;
+        height: 300px;
+        box-sizing: border-box;
+        border: 1px solid #dce2ed;
+        border-radius: 8px;
+      }
+
+      @media (max-width: 600px) {
+        #detail-proof .proof-preview {
+          height: 250px !important;
+          max-height: 250px !important;
+        }
+
+        #detail-proof img.proof-image {
+          max-height: 220px !important;
+        }
+      }
+
+      #send-whatsapp-button {
+        display: block;
+        width: 100%;
+        margin-top: 12px;
+        min-height: 44px;
+        padding: 11px 16px;
+        border: none;
+        border-radius: 8px;
+        background: #168447;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      #send-whatsapp-button:hover {
+        background: #116b39;
+      }
+
+      #send-whatsapp-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">Q</div>
+        <div>
+          <div class="brand-name">QEDeveloper</div>
+          <div class="brand-subtitle">SUPER ADMIN PANEL</div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <span class="admin-label">Administrator</span>
+        <button type="button" class="btn-logout" id="logout-button">
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- PAGE HEADING -->
+      <section class="page-heading">
+        <h1>Dashboard Admin</h1>
+        <p>Kelola permintaan akses source code dan proses verifikasi donasi.</p>
+      </section>
+
+      <!-- ALERT GLOBAL -->
+      <div id="admin-alert" class="alert" role="alert"></div>
+
+      <!-- STATISTIK -->
+      <section class="stats">
+        <div class="stat-card stat-pending">
+          <div class="stat-label">Belum Dikirim</div>
+          <div class="stat-value" id="count-pending">0</div>
+        </div>
+
+        <div class="stat-card stat-sent">
+          <div class="stat-label">Sudah Dikirim</div>
+          <div class="stat-value" id="count-sent">0</div>
+        </div>
+
+        <div class="stat-card stat-rejected">
+          <div class="stat-label">Ditolak</div>
+          <div class="stat-value" id="count-rejected">0</div>
+        </div>
+      </section>
+
+      <!-- DAFTAR PERMINTAAN -->
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Permintaan Akses</h2>
+          <p>Periksa permintaan dan lakukan tindakan sesuai statusnya.</p>
+        </div>
+
+        <!-- TAB STATUS -->
+        <div class="tabs">
+          <button
+            type="button"
+            class="tab-button active"
+            data-status-filter="BELUM_DIKIRIM"
+          >
+            Belum Dikirim
+          </button>
+
+          <button
+            type="button"
+            class="tab-button"
+            data-status-filter="SUDAH_DIKIRIM"
+          >
+            Sudah Dikirim
+          </button>
+
+          <button type="button" class="tab-button" data-status-filter="DITOLAK">
+            Ditolak
+          </button>
+        </div>
+
+        <div class="request-toolbar">
+          <span class="request-count" id="request-count">
+            Memuat permintaan...
+          </span>
+
+          <button type="button" class="btn-refresh" id="refresh-requests">
+            ↻ Refresh
+          </button>
+        </div>
+
+        <!-- LIST DATA DARI API -->
+        <div class="request-list" id="request-list">
+          <div class="empty-state">Memuat data permintaan akses...</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">QEDeveloper Admin Panel</footer>
+
+    <!-- MODAL DETAIL PERMINTAAN -->
+    <div class="modal" id="request-detail-modal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h2>Detail Permintaan Akses</h2>
+
+          <button
+            type="button"
+            class="btn-close"
+            id="close-detail-modal"
+            aria-label="Tutup"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <!-- ALERT DETAIL -->
+          <div id="detail-alert" class="alert" role="alert"></div>
+
+          <!-- DATA PEMOHON -->
+          <section class="detail-section">
+            <h3>Informasi Pemohon</h3>
+
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Nama</span>
+                <div class="detail-value" id="detail-name">-</div>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-label">WhatsApp</span>
+                <div class="detail-value" id="detail-whatsapp">-</div>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-label">Email</span>
+                <div class="detail-value" id="detail-email">-</div>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-label">Produk</span>
+                <div class="detail-value" id="detail-product">-</div>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-label">Nominal Donasi</span>
+                <div class="detail-value" id="detail-amount">-</div>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-label">Tanggal Permintaan</span>
+                <div class="detail-value" id="detail-created">-</div>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-label">Status</span>
+                <div class="detail-value" id="detail-status">-</div>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-label">ID Permintaan</span>
+                <div class="detail-value" id="detail-id">-</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- BUKTI TRANSFER -->
+          <section class="detail-section">
+            <h3>Bukti Transfer</h3>
+
+            <div class="proof-box" id="detail-proof">
+              Bukti transfer belum tersedia.
+            </div>
+          </section>
+
+          <!-- INFORMASI KODE AKSES -->
+          <section class="detail-section" id="access-code-section">
+            <h3>Kode Akses</h3>
+
+            <div class="code-box">
+              <div class="code-label">KODE AKSES</div>
+              <div class="access-code" id="detail-access-code">-</div>
+
+              <div class="code-note" id="detail-code-note">
+                Kode akan muncul setelah admin menyiapkannya.
+              </div>
+            </div>
+          </section>
+
+          <!-- INFORMASI PENGIRIMAN -->
+          <section class="detail-section">
+            <h3>Informasi Pengiriman</h3>
+
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Tanggal Dikirim</span>
+                <div class="detail-value" id="detail-sent-at">-</div>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-label">Tanggal Kedaluwarsa</span>
+                <div class="detail-value" id="detail-expired-at">-</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- CATATAN PENOLAKAN -->
+          <section class="detail-section" id="admin-note-section">
+            <h3>Catatan Admin</h3>
+
+            <div class="detail-value" id="detail-admin-note">
+              Tidak ada catatan.
+            </div>
+          </section>
+
+          <!-- FORM ALASAN PENOLAKAN -->
+          <section class="detail-section" id="reject-form-section" hidden>
+            <h3>Alasan Penolakan</h3>
+
+            <textarea
+              id="reject-note"
+              class="admin-note"
+              placeholder="Tuliskan alasan penolakan permintaan..."
+            ></textarea>
+          </section>
+        </div>
+
+        <!-- TOMBOL TINDAKAN -->
+        <div class="modal-footer" id="detail-actions">
+          <button type="button" class="btn btn-gold" id="prepare-code-button">
+            Siapkan Kode Akses
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-success"
+            id="confirm-sent-button"
+          >
+            Konfirmasi Sudah Dikirim
+          </button>
+
+          <button type="button" class="btn btn-danger" id="show-reject-button">
+            Tolak Permintaan
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-danger"
+            id="confirm-reject-button"
+            hidden
+          >
+            Konfirmasi Penolakan
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="cancel-reject-button"
+            hidden
+          >
+            Batal
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="close-detail-button"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- API CLIENT -->
+    <!-- Sesuaikan lokasi api.js dengan struktur folder project QEDeveloper -->
+    <script src="../assets/js/api.js"></script>
+
+    <!-- LOGIKA DASHBOARD -->
+
+    <script src="../assets/admin_js/admin.js"></script>
+  </body>
+</html>
