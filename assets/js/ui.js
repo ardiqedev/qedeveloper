@@ -111,8 +111,6 @@
         ? `<span class="tag tag-featured">Unggulan</span>`
         : "";
 
-      const status = this.escapeHTML(tool.status || "gratis");
-
       return `
         <article class="tool-card" data-tool-id="${this.escapeHTML(tool.id)}">
 
@@ -129,7 +127,6 @@
 
             <div class="tool-meta">
               <span class="tag">${category}</span>
-              <span class="status">${status}</span>
             </div>
 
             <h3>
@@ -202,18 +199,23 @@
         {
           label: "Tonton Tutorial YouTube",
           url: product.youtubeUrl || product.tutorialUrl,
+          className: "youtube-button",
+          icon: "▶",
         },
         {
           label: "Lihat Review TikTok",
           url: product.tiktokUrl,
+          className: "button secondary",
         },
         {
           label: "Download Source Code / Template",
           url: product.downloadUrl,
+          className: "button secondary",
         },
         {
           label: "Lihat Produk Affiliate",
           url: product.affiliateUrl,
+          className: "button secondary",
         },
       ];
 
@@ -222,11 +224,12 @@
         .map(
           (item) => `
         <a
-          class="button secondary block"
+          class="button ${item.className} block"
           href="${this.escapeHTML(item.url)}"
           target="_blank"
           rel="noopener noreferrer"
         >
+          ${item.icon ? `<span aria-hidden="true">${item.icon}</span> ` : ""}
           ${this.escapeHTML(item.label)}
         </a>
       `,

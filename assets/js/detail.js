@@ -465,8 +465,12 @@
       };
 
       const tutorialLinks = [
-        actionLink(youtubeUrl, "▶ Tonton Tutorial YouTube"),
-        actionLink(tiktokUrl, "♪ Lihat Tutorial TikTok"),
+        actionLink(
+          youtubeUrl,
+          "▶ Tonton Tutorial YouTube",
+          "button youtube-button",
+        ),
+        actionLink(tiktokUrl, "♪ Lihat Tutorial TikTok", "button secondary"),
       ]
         .filter(Boolean)
         .join("");

@@ -767,3 +767,47 @@
   font-size: 28px;
   cursor: pointer;
 }
+
+/* =========================================
+   QEDEVELOPER - YOUTUBE BUTTON
+========================================= */
+
+.product-detail-actions a.youtube-button,
+.product-detail-actions .youtube-button {
+  background-color: #ff0000 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border: 1px solid #ff0000 !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+
+.product-detail-actions a.youtube-button:hover {
+  background-color: #cc0000 !important;
+  color: #ffffff !important;
+  border-color: #cc0000 !important;
+}
+
+.product-detail-actions a.youtube-button span {
+  color: #ffffff !important;
+}
+
+/* =========================================
+   FIX - YOUTUBE BUTTON
+========================================= */
+
+.product-detail-actions a.button.youtube-button.block {
+  background: #ff0000 !important;
+  background-color: #ff0000 !important;
+  color: #ffffff !important;
+  border: 1px solid #ff0000 !important;
+  background-image: none !important;
+}
+
+.product-detail-actions a.button.youtube-button.block:hover {
+  background: #cc0000 !important;
+  background-color: #cc0000 !important;
+  color: #ffffff !important;
+  border-color: #cc0000 !important;
+}
